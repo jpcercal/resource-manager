@@ -74,7 +74,7 @@ class DoctrineResourceManager implements ResourceManagerInterface
             return $repository->createQueryBuilder($this->getDriver()->getEntityAlias());
         }
 
-        $queryBuilder = $repository->$repositoryMethods[$repositoryMethod]();
+        $queryBuilder = $repository->{$repositoryMethods[$repositoryMethod]}();
 
         if (!$queryBuilder instanceof QueryBuilder) {
             throw new ResourceException(sprintf(
