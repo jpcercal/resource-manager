@@ -11,8 +11,8 @@
 
 namespace Cekurte\ResourceManager\Contract;
 
-use Cekurte\ResourceManager\Contract\QueryExprInterface;
 use Cekurte\ResourceManager\Exception\ResourceDataNotFoundException;
+use Cekurte\Resource\Query\Language\ExprQueue;
 
 /**
  * ResourceSearchable Interface
@@ -26,22 +26,22 @@ interface ResourceSearchableInterface extends ResourceInterface
      *
      * @api
      *
-     * @param  QueryExprInterface $queryExpr
+     * @param  ExprQueue $queue
      *
      * @return ResourceInterface
      *
      * @throws ResourceDataNotFoundException
      */
-    public function findResource(QueryExprInterface $queryExpr);
+    public function findResource(ExprQueue $queue);
 
     /**
      * Find the resources given the Query Expression.
      *
      * @api
      *
-     * @param  QueryExprInterface $queryExpr
+     * @param  ExprQueue $queue
      *
      * @return array
      */
-    public function findResources(QueryExprInterface $queryExpr = null);
+    public function findResources(ExprQueue $queue = null);
 }

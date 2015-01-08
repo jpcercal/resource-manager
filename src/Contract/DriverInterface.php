@@ -11,22 +11,15 @@
 
 namespace Cekurte\ResourceManager\Contract;
 
-use Cekurte\ResourceManager\Contract\QueryExprInterface;
-use Psr\Http\Message\ServerRequestInterface;
-
 /**
- * QueryString Interface
+ * Driver Interface
  *
  * @author João Paulo Cercal <jpcercal@gmail.com>
  */
-interface QueryStringInterface
+interface DriverInterface
 {
     /**
-     * Process all queries
-     *
-     * @return ServerRequestInterface $request
-     *
-     * @return QueryExprInterface
+     * @param array $args Arguments to setup the driver
      */
-    public function process(ServerRequestInterface $request);
+    public function __construct(array $args = []);
 }
