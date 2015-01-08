@@ -11,7 +11,6 @@
 
 namespace Cekurte\ResourceManager\Service;
 
-use Cekurte\ResourceManager\Contract\QueryExprInterface;
 use Cekurte\ResourceManager\Contract\ResourceInterface;
 use Cekurte\ResourceManager\Contract\ResourceManagerInterface;
 use Cekurte\ResourceManager\Driver\DoctrineDriver;
@@ -21,6 +20,8 @@ use Cekurte\ResourceManager\Exception\ResourceManagerRefusedDeleteException;
 use Cekurte\ResourceManager\Exception\ResourceManagerRefusedLogException;
 use Cekurte\ResourceManager\Exception\ResourceManagerRefusedUpdateException;
 use Cekurte\ResourceManager\Exception\ResourceManagerRefusedWriteException;
+use Cekurte\Resource\Query\Language\ExprQueue;
+use Cekurte\Resource\Query\Language\Processor\DoctrineOrmProcessor;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 
@@ -50,25 +51,6 @@ class DoctrineResourceManager implements ResourceManagerInterface
     public function getDriver()
     {
         return $this->driver;
-    }
-
-    /**
-     * Process the QueryExpr object.
-     *
-     * @param  QueryBuilder            $queryBuilder
-     * @param  QueryExprInterface|null $queryExpr
-     */
-    protected function processQueryExpr(QueryBuilder $queryBuilder, QueryExprInterface $queryExpr = null)
-    {
-        if (!empty($queryExpr)) {
-            foreach ($queryExpr as $item) {
-                $queryBuilder->andWhere($item['expr']['resource']);
-
-                foreach ($item['params'] as $key => $value) {
-                    $queryBuilder->setParameter($key, $value);
-                }
-            }
-        }
     }
 
     /**
@@ -123,19 +105,31 @@ class DoctrineResourceManager implements ResourceManagerInterface
     }
 
     /**
+     * @param  DoctrineOrmProcessor $processor
+     * @param  ExprQueue            $queue
+     *
+     * @return QueryBuilder
+     */
+    protected function processQueue(DoctrineOrmProcessor $processor, ExprQueue $queue)
+    {
+        return $processor->process($queue);
+    }
+
+    /**
      * @inheritdoc
      */
-    public function findResource(QueryExprInterface $queryExpr)
+    public function findResource(ExprQueue $queue)
     {
         try {
             $queryBuilder = $this->getQueryBuilder('find_resource');
 
-            $this->processQueryExpr($queryBuilder, $queryExpr);
+            $this->processQueue(new DoctrineOrmProcessor($queryBuilder), $queue);
 
             return $queryBuilder->getQuery()->getSingleResult();
         } catch (NoResultException $e) {
             throw new ResourceDataNotFoundException(sprintf(
-                'The resource "%s" was not found. ' . $queryExpr,
+                'The resource "%s" was not found using the following expressions: %s',
+                PHP_EOL . $queue,
                 $this->getDriver()->getEntityClass()
             ));
         }
@@ -144,11 +138,13 @@ class DoctrineResourceManager implements ResourceManagerInterface
     /**
      * @inheritdoc
      */
-    public function findResources(QueryExprInterface $queryExpr = null)
+    public function findResources(ExprQueue $queue = null)
     {
         $queryBuilder = $this->getQueryBuilder('find_resources');
 
-        $this->processQueryExpr($queryBuilder, $queryExpr);
+        if (!is_null($queue)) {
+            $this->processQueue(new DoctrineOrmProcessor($queryBuilder), $queue);
+        }
 
         return $queryBuilder->getQuery()->getResult();
     }

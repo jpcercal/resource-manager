@@ -2,7 +2,10 @@
 
 namespace Cekurte\ResourceManager\Test;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+use Cekurte\ResourceManager\Driver\DoctrineDriver;
+use Cekurte\Tdd\ReflectionTestCase;
+
+class TestCase extends ReflectionTestCase
 {
     public function getDoctrineDriver()
     {
@@ -12,10 +15,19 @@ class TestCase extends \PHPUnit_Framework_TestCase
         ;
     }
 
+    public function getDoctrineResourceManager(DoctrineDriver $driver)
+    {
+        return $this
+            ->getMockBuilder('\\Cekurte\\ResourceManager\\Service\\DoctrineResourceManager')
+            ->enableOriginalConstructor()
+            ->setConstructorArgs([$driver])
+        ;
+    }
+
     public function getEntityManager()
     {
         return $this
-            ->getMockBuilder('\\Doctrine\\ORM\\EntityManagerInterface')
+            ->getMockBuilder('\\Doctrine\\ORM\\EntityManager')
             ->disableOriginalConstructor()
         ;
     }
