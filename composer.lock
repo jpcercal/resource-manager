@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "295b9f7fd73608a5d4baf694f3170898",
-    "content-hash": "80a953227cfcab1e393ad8e28edf2f8b",
+    "hash": "f2b713cf2d2f3fdf7779f5320c4f2e7f",
+    "content-hash": "572bae27015ed334d535185b188fd59c",
     "packages": [
         {
             "name": "cekurte/rql",
-            "version": "v0.0.2",
+            "version": "v0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cekurte/resource-query-language.git",
-                "reference": "9d82c2181d48d6284f31513086f9c52bcc606c7e"
+                "reference": "6e5c9dcf50d49bb82f287a1d02333a61eb5aa344"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cekurte/resource-query-language/zipball/9d82c2181d48d6284f31513086f9c52bcc606c7e",
-                "reference": "9d82c2181d48d6284f31513086f9c52bcc606c7e",
+                "url": "https://api.github.com/repos/cekurte/resource-query-language/zipball/6e5c9dcf50d49bb82f287a1d02333a61eb5aa344",
+                "reference": "6e5c9dcf50d49bb82f287a1d02333a61eb5aa344",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                 "rql",
                 "sort"
             ],
-            "time": "2015-12-18 19:31:00"
+            "time": "2015-01-08 10:47:26"
         },
         {
             "name": "doctrine/annotations",
