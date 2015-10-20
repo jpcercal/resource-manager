@@ -21,6 +21,7 @@ use Cekurte\ResourceManager\Exception\ResourceManagerRefusedUpdateException;
 use Cekurte\ResourceManager\Exception\ResourceManagerRefusedWriteException;
 use Cekurte\ResourceManager\Query\Expr\DoctrineQueryExpr;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -148,16 +149,14 @@ class DoctrineResourceManager implements ResourceManagerInterface
      */
     public function findResource(QueryExprInterface $queryExpr)
     {
-        $resource = $this->getQueryBuilder($queryExpr)->getQuery()->getSingleResult();
-
-        if (!$resource) {
+        try {
+            return $this->getQueryBuilder($queryExpr)->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
             throw new ResourceDataNotFoundException(sprintf(
                 'The resource "%s" was not found. ' . $queryExpr,
                 $this->getResourceClassName()
             ));
         }
-
-        return $resource;
     }
 
     /**
