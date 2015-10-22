@@ -11,18 +11,13 @@
 
 namespace Cekurte\ResourceManager;
 
-use Cekurte\ResourceManager\Contract\QueryExprInterface;
-use Cekurte\ResourceManager\Contract\ResourceInterface;
 use Cekurte\ResourceManager\Contract\ResourceManagerInterface;
-use Cekurte\ResourceManager\Exception\ResourceDataNotFoundException;
-use Cekurte\ResourceManager\Exception\ResourceManagerRefusedDeleteException;
-use Cekurte\ResourceManager\Exception\ResourceManagerRefusedLogException;
-use Cekurte\ResourceManager\Exception\ResourceManagerRefusedUpdateException;
-use Cekurte\ResourceManager\Exception\ResourceManagerRefusedWriteException;
-use Cekurte\ResourceManager\Query\Expr\DoctrineQueryExpr;
+use Cekurte\ResourceManager\Doctrine\DoctrineResourceDeletableTrait;
+use Cekurte\ResourceManager\Doctrine\DoctrineResourceLoggableTrait;
+use Cekurte\ResourceManager\Doctrine\DoctrineResourceSearchableTrait;
+use Cekurte\ResourceManager\Doctrine\DoctrineResourceUpdatableTrait;
+use Cekurte\ResourceManager\Doctrine\DoctrineResourceWritableTrait;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * Doctrine ResourceManager
@@ -31,15 +26,21 @@ use Doctrine\ORM\QueryBuilder;
  */
 class DoctrineResourceManager implements ResourceManagerInterface
 {
+    use DoctrineResourceLoggableTrait;
+    use DoctrineResourceSearchableTrait;
+    use DoctrineResourceWritableTrait;
+    use DoctrineResourceUpdatableTrait;
+    use DoctrineResourceDeletableTrait;
+
     /**
      * @var EntityManagerInterface
      */
-    private $entityManager;
+    protected $entityManager;
 
     /**
      * @var string
      */
-    private $resourceClassName;
+    protected $resourceClassName;
 
     /**
      * @param EntityManagerInterface $entityManager
@@ -47,9 +48,24 @@ class DoctrineResourceManager implements ResourceManagerInterface
      */
     public function __construct(EntityManagerInterface $entityManager, $resourceClassName)
     {
+        $this
+            ->setEntityManager($entityManager)
+            ->setResourceClassName($resourceClassName)
+        ;
+    }
+
+    /**
+     * Set a entityManager.
+     *
+     * @param  EntityManagerInterface $entityManager
+     *
+     * @return DoctrineResourceManager
+     */
+    protected function setEntityManager(EntityManagerInterface $entityManager)
+    {
         $this->entityManager = $entityManager;
 
-        $this->setResourceClassName($resourceClassName);
+        return $this;
     }
 
     /**
@@ -63,7 +79,9 @@ class DoctrineResourceManager implements ResourceManagerInterface
     /**
      * Set a resource class name.
      *
-     * @param string $resourceClassName
+     * @param  string $resourceClassName
+     *
+     * @return DoctrineResourceManager
      */
     protected function setResourceClassName($resourceClassName)
     {
@@ -76,34 +94,8 @@ class DoctrineResourceManager implements ResourceManagerInterface
         }
 
         $this->resourceClassName = $resourceClassName;
-    }
 
-    /**
-     * Get and setup a QueryBuilder instance
-     *
-     * @param  QueryExprInterface|null $queryExpr
-     *
-     * @return QueryBuilder
-     */
-    protected function getQueryBuilder(QueryExprInterface $queryExpr = null)
-    {
-        $queryBuilder = $this
-            ->getEntityManager()
-            ->getRepository($this->getResourceClassName())
-            ->createQueryBuilder($this->getAlias())
-        ;
-
-        if (!empty($queryExpr)) {
-            foreach ($queryExpr as $item) {
-                $queryBuilder->andWhere($item['expr']['resource']);
-
-                foreach ($item['params'] as $key => $value) {
-                    $queryBuilder->setParameter($key, $value);
-                }
-            }
-        }
-
-        return $queryBuilder;
+        return $this;
     }
 
     /**
@@ -114,101 +106,5 @@ class DoctrineResourceManager implements ResourceManagerInterface
     public function getResourceClassName()
     {
         return $this->resourceClassName;
-    }
-
-    /**
-     * Get the alias.
-     *
-     * @return string
-     */
-    public function getAlias()
-    {
-        $className = end(explode('\\', $this->getResourceClassName()));
-
-        return strtolower(substr($className, 0, 1));
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getLogEntries(ResourceInterface $resource)
-    {
-        try {
-            return $this
-                ->getEntityManager()
-                ->getRepository('\Gedmo\Loggable\Entity\LogEntry')
-                ->getLogEntries($resource)
-            ;
-        } catch (\Exception $e) {
-            throw new ResourceManagerRefusedLogException($e->getMessage());
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findResource(QueryExprInterface $queryExpr)
-    {
-        try {
-            return $this->getQueryBuilder($queryExpr)->getQuery()->getSingleResult();
-        } catch (NoResultException $e) {
-            throw new ResourceDataNotFoundException(sprintf(
-                'The resource "%s" was not found. ' . $queryExpr,
-                $this->getResourceClassName()
-            ));
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findResources(QueryExprInterface $queryExpr = null)
-    {
-        return $this->getQueryBuilder($queryExpr)->getQuery()->getResult();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function writeResource(ResourceInterface $resource)
-    {
-        try {
-            $this->getEntityManager()->persist($resource);
-            $this->getEntityManager()->flush();
-
-            return true;
-        } catch (\Exception $e) {
-            throw new ResourceManagerRefusedWriteException($e->getMessage());
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function updateResource(ResourceInterface $resource)
-    {
-        try {
-            $this->getEntityManager()->persist($resource);
-            $this->getEntityManager()->flush();
-
-            return true;
-        } catch (\Exception $e) {
-            throw new ResourceManagerRefusedUpdateException($e->getMessage());
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function deleteResource(ResourceInterface $resource)
-    {
-        try {
-            $this->getEntityManager()->remove($resource);
-            $this->getEntityManager()->flush();
-
-            return true;
-        } catch (\Exception $e) {
-            throw new ResourceManagerRefusedDeleteException($e->getMessage());
-        }
     }
 }
