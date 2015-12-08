@@ -44,15 +44,16 @@ Now use the a implementation of [ResourceManagerInterface](https://github.com/jp
 - [ResourceUpdatableInterface](https://github.com/jpcercal/resource-manager/blob/master/src/Contract/ResourceUpdatableInterface.php)
 - [ResourceDeletableInterface](https://github.com/jpcercal/resource-manager/blob/master/src/Contract/ResourceDeletableInterface.php)
 
-Today is available only the [DoctrineResourceManager](https://github.com/jpcercal/resource-manager/blob/master/src/DoctrineResourceManager.php) to manage your resources.
+Today is available only the [DoctrineResourceManager](https://github.com/jpcercal/resource-manager/blob/master/src/Service/DoctrineResourceManager.php) to manage your resources.
 
 ```php
 <?php
 
 use Cekurte\ResourceManager\Contract\ResourceInterface;
-use Cekurte\ResourceManager\DoctrineResourceManager;
+use Cekurte\ResourceManager\Driver\DoctrineDriver;
 use Cekurte\ResourceManager\Query\Expr\DoctrineQueryExpr;
 use Cekurte\ResourceManager\Query\QueryString;
+use Cekurte\ResourceManager\ResourceManager;
 
 class YourController
 {
@@ -62,10 +63,17 @@ class YourController
     {
         // ...
 
-        $resourceManager = new DoctrineResourceManager(
-            $entityManager,
-            "YourNamespace\YourEntity"
-        );
+        $resourceManager = ResourceManager::create('doctrine', [
+            'em'     => $entityManager,
+            'entity' => 'YourNamespace\YourEntity',
+        ]);
+
+        // OR ...
+        // $resourceManager = ResourceManager::create(new DoctrineDriver([
+        //     'em'     => $entityManager,
+        //     'entity' => 'YourNamespace\YourEntity',
+        // ]));
+
 
         // perform a query given a query string from PSR ServerRequestInterface
         // http://yourdomain.com/your-route/?q[]=alias.field:eq:value
