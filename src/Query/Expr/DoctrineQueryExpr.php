@@ -49,7 +49,9 @@ class DoctrineQueryExpr extends AbstractQueryExpr implements QueryExprInterface
      */
     protected function getParameterKeyByNode($node)
     {
-        return end(explode('.', $node));
+        $pieces = explode('.', $node);
+
+        return end($pieces);
     }
 
     /**
