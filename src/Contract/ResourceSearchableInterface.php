@@ -39,7 +39,7 @@ interface ResourceSearchableInterface extends ResourceInterface
      *
      * @api
      *
-     * @param  ExprQueue $queue
+     * @param  ExprQueue|null $queue
      *
      * @return array
      */
