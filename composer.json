@@ -8,7 +8,7 @@
     "require": {
         "php": ">=5.5",
         "doctrine/orm": "^2.5",
-        "cekurte/rql": "^0.0.4"
+        "cekurte/rql": "^0.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
