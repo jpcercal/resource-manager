@@ -1,8 +1,8 @@
 # ResourceManager
 
-[![Build Status](https://img.shields.io/travis/cekurte/resource-manager/master.svg?style=square)](http://travis-ci.org/cekurte/resource-manager)
-[![Code Climate](https://codeclimate.com/github/cekurte/resource-manager/badges/gpa.svg)](https://codeclimate.com/github/cekurte/resource-manager)
-[![Coverage Status](https://coveralls.io/repos/github/cekurte/resource-manager/badge.svg?branch=master)](https://coveralls.io/github/cekurte/resource-manager?branch=master)
+[![Build Status](https://img.shields.io/travis/jpcercal/resource-manager/master.svg?style=square)](http://travis-ci.org/jpcercal/resource-manager)
+[![Code Climate](https://codeclimate.com/github/jpcercal/resource-manager/badges/gpa.svg)](https://codeclimate.com/github/jpcercal/resource-manager)
+[![Coverage Status](https://coveralls.io/repos/github/jpcercal/resource-manager/badge.svg?branch=master)](https://coveralls.io/github/jpcercal/resource-manager?branch=master)
 [![Latest Stable Version](https://img.shields.io/packagist/v/cekurte/resource-manager.svg?style=square)](https://packagist.org/packages/cekurte/resource-manager)
 [![License](https://img.shields.io/packagist/l/cekurte/resource-manager.svg?style=square)](https://packagist.org/packages/cekurte/resource-manager)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/42d8e5de-3999-4155-bddf-31e401c304cf/mini.png)](https://insight.sensiolabs.com/projects/42d8e5de-3999-4155-bddf-31e401c304cf)
@@ -16,7 +16,7 @@
 - The package is available on [Packagist](http://packagist.org/packages/cekurte/resource-manager).
 - The source files is [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) compatible.
 - Autoloading is [PSR-4](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-4-autoloader.md) compatible.
-- [RequestParser](https://github.com/cekurte/resource-query-language/blob/master/src/Parser/RequestParser.php) is [PSR-7](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message.md) compatible.
+- [RequestParser](https://github.com/jpcercal/resource-query-language/blob/master/src/Parser/RequestParser.php) is [PSR-7](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message.md) compatible.
 
 ```shell
 composer require cekurte/resource-manager
@@ -70,7 +70,7 @@ $resourceManager = new DoctrineResourceManager(new DoctrineDriver([
 
 ### Getting resources
 
-To retrieve the resources you must call the method `findResources` passing as argument an implementation of [ExprQueue](https://github.com/cekurte/resource-query-language/blob/master/src/ExprQueue.php). This method will return an array of resources.
+To retrieve the resources you must call the method `findResources` passing as argument an implementation of [ExprQueue](https://github.com/jpcercal/resource-query-language/blob/master/src/ExprQueue.php). This method will return an array of resources.
 
 ```php
 <?php
@@ -92,7 +92,7 @@ $resources = $resourceManager->findResources($queue);
 
 ### Getting one resource
 
-To retrieve one resource you must call the method `findResource` passing as argument an implementation of [ExprQueue](https://github.com/cekurte/resource-query-language/blob/master/src/ExprQueue.php). This method will throw an exception if the resource can not be found.
+To retrieve one resource you must call the method `findResource` passing as argument an implementation of [ExprQueue](https://github.com/jpcercal/resource-query-language/blob/master/src/ExprQueue.php). This method will throw an exception if the resource can not be found.
 
 ```php
 <?php
